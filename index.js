@@ -68,8 +68,19 @@ subMenuEl.style.top = '0';
 //part 4 Adding Menu Interaction
 //step1
 const topMenuLinks = document.querySelectorAll("a");
- function buildSubmenu(subLinks){
- }
+
+
+function buildSubmenu(subLinks) {
+  subMenuEl.innerHTML = "";  // Clear existing submenu
+  subLinks.forEach(subLink => {
+    const a = document.createElement('a');
+    a.setAttribute('href', subLink.href);
+    a.textContent = subLink.text;
+    subMenuEl.appendChild(a);
+  })
+}
+
+
 topMenuEl.addEventListener("click", (e) => {
 
   //step2 -1
@@ -80,63 +91,57 @@ topMenuEl.addEventListener("click", (e) => {
   }
   //step2-3
   console.log(e.target.textContent);
+
+  // remove the active class of other menu
+  topMenuLinks.forEach(aElements => {
+        aElements.classList.remove("active");
+        subMenuEl.style.top = "0";
+     }
+  )
+
   // e.target.classList.add("active")
-  //  we need to check if it already active in the case we remove it otherwise we add it
-  // 2 The event listener should remove the active class from each other <a> element in topMenuLinks - whether the active class exists or not.
+  //  we need to check if it already active in the case we remove it otherwise we add it   // 2 The event listener should remove the active class from each other <a> element in topMenuLinks - whether the active class exists or not.
   if (e.target.classList.contains("active")) {
     e.target.classList.remove("active")
   } else {
     e.target.classList.add("active")
   }
-  
-//Part 5: Adding Submenu Interaction
-  topMenuLinks.forEach(aElements => {
-    console.log(aElements.textContent + " :" + e.target.textContent)
 
-    if (aElements.classList.contains("active") && aElements.textContent != e.target.textContent) {
-      aElements.classList.remove("active")
-    }
+  //Part 5: Adding Submenu Interaction
+
+  const clickedLink = menuLinks.find(link => link.text === e.target.textContent);
+
+  if (clickedLink.subLinks) {
+    subMenuEl.style.top = "100%";
+    buildSubmenu(clickedLink.subLinks); // Call the helper function
+  } else {
+    subMenuEl.style.top = "0";
+    subMenuEl.innerHTML = "";
   }
-  )
- 
-subMenuEl.innerHTML="";
-  menuLinks.forEach(link => {
-    if (link.text == e.target.textContent && link.subLinks) {
 
-      link.subLinks.forEach(subLink => {
-        const a = document.createElement('a');
-        a.setAttribute('href', subLink.href);
-        a.textContent = subLink.text;
-        subMenuEl.appendChild(a);
-        // console.log("sublink :" + subLink.text)
-        
-      })
+}
+)
 
-    } 
-      
-  })
-  buildSubmenu(subLinks)
-// console.log(buildSubmenu)
-  })
 // Attach a delegated 'click' event listener to subMenuEl.
-  subMenuEl.addEventListener("click", (e) => {
+subMenuEl.addEventListener("click", (e) => {
 
   //step2 -1
   e.preventDefault();
   //step2-2
   if (!e.target.matches("a")) {
     return;
-     console.log(e.target.textContent); // Log clicked link content
-        subMenuEl.style.top = "0"; // Hide submenu after click
-  } 
-    // Remove "active" class from top menu links
-    document.querySelectorAll("#topMenuEl a").forEach(link => {
-        link.classList.remove("active");
-    })
-  
+  }
+  console.log(e.target.textContent); // Log clicked link content
+  subMenuEl.style.top = "0"; // Hide submenu after click
+
+  // Remove "active" class from top menu links
+  document.querySelectorAll("#topMenuEl a").forEach(link => {
+    link.classList.remove("active");
+  })
+
   // Update the <h1> inside mainEl with the clicked submenu text
-    const mainEl = document.querySelector("main h1");
-    mainEl.textContent = event.target.textContent === "about" ? "About" : event.target.textContent;
+  const mainEl = document.querySelector("main h1");
+  mainEl.textContent = e.target.textContent  ;
 });
 
 
